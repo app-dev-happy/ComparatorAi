@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparator with AI</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Comparator.AI</h1>
+            <div class="header-buttons">
+                <button id="clear-btn" class="icon-btn" title="Clear all">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="comparison-inputs">
+                <div class="input-container">
+                    <input type="text" id="input-left" placeholder="Enter first item..." autocomplete="off">
+                </div>
+                
+                <div class="vs-container">
+                    <span>VS</span>
+                </div>
+                
+                <div class="input-container">
+                    <input type="text" id="input-right" placeholder="Enter second item..." autocomplete="off">
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button id="compare-btn" disabled>Compare</button>
+            </div>
+            
+            <div id="results-container" class="hidden">
+                <div class="comparison-header">
+                    <h2><span id="left-header">Item 1</span> vs <span id="right-header">Item 2</span></h2>
+                </div>
+                <div id="comparison-content">
+                    <!-- Comparison results will be inserted here as paragraphs -->
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Powered by AI - Get factual comparisons instantly</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
