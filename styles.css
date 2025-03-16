@@ -87,10 +87,11 @@ body {
 header {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 2rem;
     position: relative;
+    gap: 0.5rem;
 }
 
 .header-buttons {
