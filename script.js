@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const conclusionText = document.createElement('div');
                 conclusionText.className = 'conclusion-text';
-                conclusionText.textContent = line;
+                conclusionText.textContent = line.replace(/\*/g, '');
                 currentSection.appendChild(conclusionText);
             }
             // Add any other lines to the current section
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Check if this is part of the conclusion
                 if (currentSection.classList.contains('conclusion')) {
                     const conclusionText = currentSection.querySelector('.conclusion-text');
-                    conclusionText.textContent += '\n' + line;
+                    conclusionText.textContent += '\n' + line.replace(/\*/g, '');
                 } else {
                     // Add as a note to the current section
                     const note = document.createElement('div');
