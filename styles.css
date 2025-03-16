@@ -37,6 +37,7 @@
     margin-top: 0.5rem;
     margin-bottom: 1rem;
     text-align: center;
+    font-style: italic;
 }
 
 
@@ -434,6 +435,23 @@ input[type="text"]:focus {
     margin-top: 0.5rem;
     font-style: italic;
     transition: color 0.3s ease;
+}
+
+.clear-results-btn {
+    display: block;
+    margin: 1rem auto 0;
+    padding: 0.5rem 1.5rem;
+    background-color: #888;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.clear-results-btn:hover {
+    background-color: #666;
 }
 
 .comparison-section h3 {

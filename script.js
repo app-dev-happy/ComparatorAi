@@ -91,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function displayResults(data) {
         comparisonContent.innerHTML = '';
+        // Remove existing clear button if any
+        const existingClearBtn = comparisonContent.querySelector('.clear-results-btn');
+        if (existingClearBtn) {
+            existingClearBtn.remove();
+        }
         
         // Split the response by comparison factors
         const lines = data.split('\n');
@@ -226,6 +231,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentSection) {
             comparisonContent.appendChild(currentSection);
         }
+
+        // Add clear results button
+        const clearResultsBtn = document.createElement('button');
+        clearResultsBtn.className = 'clear-results-btn';
+        clearResultsBtn.textContent = 'Clear';
+        clearResultsBtn.addEventListener('click', clearAll);
+        comparisonContent.appendChild(clearResultsBtn);
     }
     
     // This function makes a real API call to Google Gemini AI
