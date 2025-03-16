@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputLeft.value = '';
         inputRight.value = '';
         compareBtn.disabled = true;
+        compareBtn.classList.remove('hidden');
         resultsContainer.classList.add('hidden');
     }
     
@@ -44,6 +45,22 @@ document.addEventListener('DOMContentLoaded', () => {
         leftHeader.textContent = item1;
         rightHeader.textContent = item2;
         
+        // Hide compare button, show progress bar and start VS rotation
+        compareBtn.classList.add('hidden');
+        document.querySelector('.vs-container').classList.add('rotating');
+        const progressBar = document.getElementById('progress-bar');
+        const progressFill = progressBar.querySelector('.progress-fill');
+        progressBar.classList.remove('hidden');
+        
+        // Animate progress bar
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            if (progress < 90) {
+                progress += 1;
+                progressFill.style.width = `${progress}%`;
+            }
+        }, 50);
+        
         // Hide results until we have new data
         resultsContainer.classList.add('hidden');
         
@@ -51,13 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
             // Call the OpenAI API to get real comparison data
             const comparisonData = await getComparisonData(item1, item2);
             displayResults(comparisonData);
-            // Show results after data is loaded
-            resultsContainer.classList.remove('hidden');
+            // Complete progress bar animation and show results
+            clearInterval(progressInterval);
+            progressFill.style.width = '100%';
+            setTimeout(() => {
+                progressBar.classList.add('hidden');
+                progressFill.style.width = '0%';
+                resultsContainer.classList.remove('hidden');
+                document.querySelector('.vs-container').classList.remove('rotating');
+            }, 300);
         } catch (error) {
             console.error('Error comparing items:', error);
-            // Show error message to user
+            // Show error message and reset progress bar
+            clearInterval(progressInterval);
+            progressBar.classList.add('hidden');
+            progressFill.style.width = '0%';
             comparisonContent.innerHTML = `<p class="error-message">Sorry, we couldn't generate a comparison at this time. Please try again later.</p>`;
             resultsContainer.classList.remove('hidden');
+            document.querySelector('.vs-container').classList.remove('rotating');
         }
     }
     
