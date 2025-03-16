@@ -530,6 +530,7 @@ input[type="text"]:focus {
 }
 
 footer {
+    margin-bottom: 20px;
     margin-top: 1.5rem;
     text-align: center;
     color: var(--footer-color);
