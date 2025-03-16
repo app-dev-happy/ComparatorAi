@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
         compareBtn.disabled = true;
         compareBtn.classList.remove('hidden');
         resultsContainer.classList.add('hidden');
+        document.querySelector('.comparison-inputs').classList.remove('hidden-mobile');
+        document.querySelector('.vs-container').classList.remove('rotating');
     }
     
     async function handleCompare() {
@@ -45,8 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
         leftHeader.textContent = item1;
         rightHeader.textContent = item2;
         
-        // Hide compare button, show progress bar and start VS rotation
+        // Hide compare button and input section on mobile, show progress bar and start VS rotation
         compareBtn.classList.add('hidden');
+        if (window.innerWidth <= 768) {
+            document.querySelector('.comparison-inputs').classList.add('hidden-mobile');
+        }
         document.querySelector('.vs-container').classList.add('rotating');
         const progressBar = document.getElementById('progress-bar');
         const progressFill = progressBar.querySelector('.progress-fill');
@@ -101,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const lines = data.split('\n');
         let currentSection = null;
         let currentFactor = '';
+        let conclusionSection = null;
+        let conclusionText = [];
         
         // Process each line of the response
         lines.forEach(line => {
@@ -111,8 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Check if this is a comparison factor line
             if (line.includes(':-') || /^\d+\.\s+[\w\s]+:-/.test(line)) {
-                // If we have a previous section, add it to the content
-                if (currentSection) {
+                // If we have a previous section (that's not the conclusion), add it to the content
+                if (currentSection && !currentSection.classList.contains('conclusion')) {
                     comparisonContent.appendChild(currentSection);
                 }
                 
@@ -192,31 +199,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // This is likely the conclusion or winner section
             else if (line.toLowerCase().includes('winner') || line.toLowerCase().includes('conclusion')) {
-                // If we have a previous section, add it to the content
-                if (currentSection) {
+                // If we have a previous non-conclusion section, add it to the content
+                if (currentSection && !currentSection.classList.contains('conclusion')) {
                     comparisonContent.appendChild(currentSection);
                 }
                 
-                // Create a conclusion section
-                currentSection = document.createElement('div');
-                currentSection.className = 'comparison-section conclusion';
+                // Store conclusion text for later
+                conclusionText.push(line.replace(/\*/g, ''));
                 
-                const conclusionHeader = document.createElement('h3');
-                conclusionHeader.className = 'conclusion-header';
-                conclusionHeader.textContent = 'Conclusion';
-                currentSection.appendChild(conclusionHeader);
-                
-                const conclusionText = document.createElement('div');
-                conclusionText.className = 'conclusion-text';
-                conclusionText.textContent = line.replace(/\*/g, '');
-                currentSection.appendChild(conclusionText);
+                // Create conclusion section if it doesn't exist
+                if (!conclusionSection) {
+                    conclusionSection = document.createElement('div');
+                    conclusionSection.className = 'comparison-section conclusion';
+                    
+                    const conclusionHeader = document.createElement('h3');
+                    conclusionHeader.className = 'conclusion-header';
+                    conclusionHeader.textContent = 'Conclusion';
+                    conclusionSection.appendChild(conclusionHeader);
+                }
+                currentSection = conclusionSection;
             }
             // Add any other lines to the current section
             else if (currentSection) {
-                // Check if this is part of the conclusion
-                if (currentSection.classList.contains('conclusion')) {
-                    const conclusionText = currentSection.querySelector('.conclusion-text');
-                    conclusionText.textContent += '\n' + line.replace(/\*/g, '');
+                if (currentSection === conclusionSection) {
+                    // Store conclusion text for later
+                    conclusionText.push(line.replace(/\*/g, ''));
                 } else {
                     // Add as a note to the current section
                     const note = document.createElement('div');
@@ -227,9 +234,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Add the last section if it exists
-        if (currentSection) {
+        // Add the last non-conclusion section if it exists
+        if (currentSection && !currentSection.classList.contains('conclusion')) {
             comparisonContent.appendChild(currentSection);
+        }
+        
+        // Add the conclusion section at the end if it exists
+        if (conclusionSection) {
+            const conclusionTextElement = document.createElement('div');
+            conclusionTextElement.className = 'conclusion-text';
+            conclusionTextElement.textContent = conclusionText.join('\n');
+            conclusionSection.appendChild(conclusionTextElement);
+            comparisonContent.appendChild(conclusionSection);
         }
 
         // Add clear results button
