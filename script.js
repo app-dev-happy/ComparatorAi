@@ -248,12 +248,69 @@ document.addEventListener('DOMContentLoaded', () => {
             comparisonContent.appendChild(conclusionSection);
         }
 
+        // Create button container
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'results-buttons';
+
         // Add clear results button
         const clearResultsBtn = document.createElement('button');
         clearResultsBtn.className = 'clear-results-btn';
         clearResultsBtn.textContent = 'Clear';
         clearResultsBtn.addEventListener('click', clearAll);
-        comparisonContent.appendChild(clearResultsBtn);
+        buttonContainer.appendChild(clearResultsBtn);
+
+        // Add share button
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'share-btn';
+        shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share';
+        shareBtn.addEventListener('click', () => shareResults(data));
+        buttonContainer.appendChild(shareBtn);
+
+        comparisonContent.appendChild(buttonContainer);
+
+        // Function to format and share results
+        function shareResults(data) {
+            const item1 = leftHeader.textContent;
+            const item2 = rightHeader.textContent;
+            
+            let shareText = "🤖 Generated using ComparatorAI - Your AI-Powered Comparison Tool\n";
+            shareText += "🔗 Try it out at [ComparatorAI](https://app-dev-happy.github.io/ComparatorAi/)\n\n";
+            shareText += `Comparison: ${item1} vs ${item2}\n\n`;
+
+            const lines = data.split('\n');
+            let currentFactor = '';
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+
+                if (line.includes(':-') || /^\d+\.\s+[\w\s]+:-/.test(line)) {
+                    currentFactor = line.replace(/^\d+\.\s+/, '').replace(':-', '').replace(/\*/g, '').replace(/[\[\]\(\)\{\}]/g, '');
+                    shareText += `\n📊 ${currentFactor}\n`;
+                } 
+                else if (line.startsWith(':')) {
+                    const itemMatch = line.match(/:\s+([^:]+)\s+:\s+(.+)\s+⭐️\s+(\d+)/);
+                    if (itemMatch) {
+                        const [, itemName, description, rating] = itemMatch;
+                        shareText += `• ${itemName.trim()}: ${description.trim()} (Rating: ${rating.trim()}/10)\n`;
+                    }
+                }
+                else if (line.toLowerCase().includes('winner') || line.toLowerCase().includes('conclusion')) {
+                    shareText += `\n🏆 ${line}\n`;
+                }
+            });
+
+            shareText += "\n🤖 Generated using ComparatorAI - Your AI-Powered Comparison Tool";
+            shareText += "\n🔗 Try it out by clicking here: https://app-dev-happy.github.io/ComparatorAi/";
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('Comparison results copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy to clipboard. Please try again.');
+            });
+        }
     }
     
     // This function makes a real API call to Google Gemini AI
