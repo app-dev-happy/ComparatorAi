@@ -275,37 +275,48 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let shareText = "🤖 Generated using ComparatorAI - Your AI-Powered Comparison Tool\n";
             shareText += "🔗 Try it out at [ComparatorAI](https://app-dev-happy.github.io/ComparatorAi/)\n\n";
-            shareText += `Comparison: ${item1} vs ${item2}\n\n`;
+            shareText += `📊 Comparison: ${item1} vs ${item2}\n\n`;
 
             const lines = data.split('\n');
             let currentFactor = '';
+            let factorCount = 0;
 
             lines.forEach(line => {
                 line = line.trim();
                 if (!line) return;
 
                 if (line.includes(':-') || /^\d+\.\s+[\w\s]+:-/.test(line)) {
+                    factorCount++;
                     currentFactor = line.replace(/^\d+\.\s+/, '').replace(':-', '').replace(/\*/g, '').replace(/[\[\]\(\)\{\}]/g, '');
-                    shareText += `\n📊 ${currentFactor}\n`;
+                    shareText += `\n${factorCount}. ${currentFactor}\n`;
                 } 
                 else if (line.startsWith(':')) {
                     const itemMatch = line.match(/:\s+([^:]+)\s+:\s+(.+)\s+⭐️\s+(\d+)/);
                     if (itemMatch) {
                         const [, itemName, description, rating] = itemMatch;
-                        shareText += `• ${itemName.trim()}: ${description.trim()} (Rating: ${rating.trim()}/10)\n`;
+                        shareText += `   • ${itemName.trim()}\n     ${description.trim()}\n     Rating: ${rating.trim()}/10\n`;
                     }
                 }
                 else if (line.toLowerCase().includes('winner') || line.toLowerCase().includes('conclusion')) {
-                    shareText += `\n🏆 ${line}\n`;
+                    shareText += `\n🏆 Final Verdict\n${line}\n`;
                 }
             });
 
+            shareText += "\n-----------------------------------";
             shareText += "\n🤖 Generated using ComparatorAI - Your AI-Powered Comparison Tool";
-            shareText += "\n🔗 Try it out by clicking here: https://app-dev-happy.github.io/ComparatorAi/";
+            shareText += "\n🔗 Try it out: https://app-dev-happy.github.io/ComparatorAi/";
 
             // Copy to clipboard
             navigator.clipboard.writeText(shareText).then(() => {
-                alert('Comparison results copied to clipboard!');
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.textContent = '✓ Comparison copied to clipboard!';
+                document.body.appendChild(notification);
+                
+                // Remove notification after 2 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
                 alert('Failed to copy to clipboard. Please try again.');
